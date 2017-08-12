@@ -24,6 +24,9 @@ class Gameboard:
         return boardImage
 
     def roll(self):
+        """ chooses a random row to delete a token from
+            probability based on the probability vector
+        """
         rollChoices = []
         for i in range(len(self.probabilityVector)):
             rollChoices += [i]*int(self.probabilityVector[i])
@@ -80,7 +83,7 @@ class Gameboard:
         
 
 class Player:
-    """the player for the probability gameboard
+    """the player for the KnockEmDown game
     """
 
     def __init__(self, name, tokenAllocation):
@@ -103,12 +106,71 @@ class Player:
         return boardImage
 
     def removeToken(self, index):
+        """ removes a token from the pile in space specified by the 
+            input index
+        """
         if self.tokenAllocation[index] > 0:
             self.tokenAllocation[index] -= 1
             self.tokenCount -= 1
 
     def hasWon(self):
+        """ returns whether the player has emptied its board """
         return self.tokenCount == 0
+
+def rateWLD(board):
+    """ calculates the expected win-lose-draw probability in a 
+        2-player game
+    """
+    if len(board.players) != 2:
+        print "please use a 2-player board"
+        return
+    WLD = rateWLDHelper(board.players[0], 
+                        board.players[1], board.probabilityVector)
+    print "This player is expected to win" WLD[0] "% of games"
+    print "lose" WLD[1] "% of games"
+    print "and draw" WLD[2] "% of games"
+    print "against this opponent"
+    return
+
+def rateWLDHelper(p1, p2, vector):
+    """ helper function for rateWLD()
+        recursively calculates the WLD rates for the matchup.
+    """
+    #base cases
+    if p1.hasWon():
+        return [100.,0,0]
+    elif p2.hasWon:
+        return [0,0,100.]
+    elif p1.tokenAllocation == p2.tokenAllocation:
+        return [0,100.,0]
+
+    #recursive step
+    """
+    else:
+        WLD = [0,0,0]
+        for p in vector:
+            WLD += addLists(WLD,
+            constMult(vector[i],rateWLDHelper(p1.removeToken[i],p2.removeToken[i],vector)))
+        return WLD
+    """
+        #TODO: change WLD type to matrix
+    return [0,0,0]
+
+def addLists(L1, L2):
+    "adds two lists as vectors. assumes lists to be of same len"
+    newL = []
+    for i in range(len(L1)):
+        newL[i]=L1[i]+L2[i]:
+    return newL
+def constMult(c,L):
+    "multiplies a constant by a vector, represented as a list"
+    newL = []
+    for i in range(len[L]):
+        newL += c*L[i]
+    return newL
+
+
+
 
 
 
