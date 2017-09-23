@@ -1,4 +1,5 @@
 from random import *
+import numpy as np
 
 TOTAL_PROBABILITY = 100
 
@@ -41,6 +42,7 @@ class Gameboard:
             numTokens is an int specifying the number of Tokens to be used
             probabilityVector is the list of probabilites to be used
         """
+        #TODO: move choice functionalities to playKED.py
         numPlayers = numPlayers
         #user choose a probability distribution and numTokens
         self.numTokens = numTokens
@@ -58,8 +60,7 @@ class Gameboard:
             tokenAllocation = input('enter an allocation for your tokens ')
             while sum(tokenAllocation) != self.numTokens\
                 or len(tokenAllocation) != len(probabilityVector):
-                tokenAllocation = 
-                    input('allocate '+ str(self.numTokens) +' tokens ')
+                tokenAllocation = input('allocate '+ str(self.numTokens) +' tokens ')
             self.players += [Player(playerName, tokenAllocation)]
             print self.players[i]
 
@@ -124,11 +125,17 @@ def rateWLD(board):
     if len(board.players) != 2:
         print "please use a 2-player board"
         return
-    WLD = rateWLDHelper(board.players[0], 
-                        board.players[1], board.probabilityVector)
-    print "This player is expected to win" WLD[0] "% of games"
-    print "lose" WLD[1] "% of games"
-    print "and draw" WLD[2] "% of games"
+
+    #calculate WLD in helper function
+    player1 = np.array(board.players[0])
+    player2 = np.array(board.players[1])
+    vector = np.array(board.players[1])
+    WLD = rateWLDHelper(p1, p2, vector)
+
+    #print WLD stats
+    print "This player is expected to win", WLD[0], "% of games"
+    print "lose", WLD[1], "% of games"
+    print "and draw", WLD[2], "% of games"
     print "against this opponent"
     return
 
@@ -137,39 +144,28 @@ def rateWLDHelper(p1, p2, vector):
         recursively calculates the WLD rates for the matchup.
     """
     #base cases
-    if p1.hasWon():
-        return [100.,0,0]
-    elif p2.hasWon:
-        return [0,0,100.]
+    if willWin(p1,p2):
+        return np.array([100.,0.,0.])
+    elif willWin(p2,p1):
+        return np.array([0.,0.,100.])
     elif p1.tokenAllocation == p2.tokenAllocation:
-        return [0,100.,0]
+        return np.array([0.,100.,0.])
 
     #recursive step
-    """
     else:
-        WLD = [0,0,0]
+        WLD = np.array([0,0,0])
         for p in vector:
-            WLD += addLists(WLD,
-            constMult(vector[i],rateWLDHelper(p1.removeToken[i],p2.removeToken[i],vector)))
+            WLD += vector[p]*rateWLDHelper(p1.removeToken[i],p2.removeToken[i],vector)
         return WLD
+
+def willWin(p1, p2):
+    """ returns true if p1 is certain to beat p2.
+        returns false otherwise
     """
-        #TODO: change WLD type to matrix
-    return [0,0,0]
-
-def addLists(L1, L2):
-    "adds two lists as vectors. assumes lists to be of same len"
-    newL = []
-    for i in range(len(L1)):
-        newL[i]=L1[i]+L2[i]:
-    return newL
-def constMult(c,L):
-    "multiplies a constant by a vector, represented as a list"
-    newL = []
-    for i in range(len[L]):
-        newL += c*L[i]
-    return newL
-
-
+    for i in len(p1.tokenAllocation):
+        if p1.tokenAllocation[i] > p2.tokenAllocation[i]:
+            return False
+    return True
 
 
 

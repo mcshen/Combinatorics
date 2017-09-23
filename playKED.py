@@ -5,12 +5,13 @@ def main():
         offers game against AI or between players
     """
 
+    #show settings menu
 
+    #set players
 
+    #set vector
 
-
-
-
+    #play game
 
 
 
