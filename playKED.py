@@ -6,6 +6,7 @@ def main():
     """
 
     #show settings menu
+    
 
     #set players
 

@@ -65,19 +65,18 @@ class Gameboard:
             print self.players[i]
 
         #play the game
-        wins = ''
-        while(wins == ''):
+        wins = 0
+        while(wins == 0):
             token = self.roll()
             print token, ' was rolled'
             for player in self.players:
                 player.removeToken(token)
                 if player.hasWon():
-                    wins += player.name + ' '
+                    wins += 1
                     print player.name + ' wins!'
                     break
-        if len(wins) > 1:
-            print "it's a tie! these", len(wins), "players are the winners:"
-            print wins
+        if wins > 1:
+            print "it's a tie!"
         print "congratulations!"
 
 
